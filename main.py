@@ -59,7 +59,7 @@ parser.add_argument('-e', '--evaluate', default='', type=str, metavar='PATH')
 args = parser.parse_args()
 args.use_pose = ("photo" in args.train_mode)
 # args.pretrained = not args.no_pretrained
-args.result = os.path.join('..', 'results')
+args.result = os.path.join('/data/', 'results')
 args.use_rgb = ('rgb' in args.input) or args.use_pose
 args.use_d = 'd' in args.input
 args.use_g = 'g' in args.input
