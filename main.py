@@ -155,11 +155,16 @@ def iterate(mode, args, loader, model, optimizer, logger, epoch):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
             if i % 10 == 0: # 매 10 iteration마다
-                summary.add_scalar('loss/depth_loss', depth_loss.item(), i)
-                summary.add_scalar('loss/photometric_loss', photometric_loss.item(), i)
-                summary.add_scalar('loss/smooth_loss', smooth_loss.item(), i)
-                summary.add_scalar('loss/loss', loss.item(), i)
+                if type(depth_loss) != float:
+                    summary.add_scalar('loss/depth_loss', depth_loss.item(), i)
+                if type(photometric_loss) != float:
+                    summary.add_scalar('loss/photometric_loss', photometric_loss.item(), i)
+                if type(smooth_loss) != float:
+                    summary.add_scalar('loss/smooth_loss', smooth_loss.item(), i)
+                if type(loss) != float:
+                    summary.add_scalar('loss/loss', loss.item(), i)
 
         gpu_time = time.time() - start
 
