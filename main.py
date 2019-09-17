@@ -8,6 +8,8 @@ import torch.backends.cudnn as cudnn
 cudnn.benchmark = True
 import torch.optim
 import torch.utils.data
+from tensorboardX import SummaryWriter
+
 
 from dataloaders.kitti_loader import load_calib, oheight, owidth, input_options, KittiDepth
 from model import DepthCompletionNet
@@ -73,6 +75,8 @@ print(args)
 depth_criterion = criteria.MaskedMSELoss() if (args.criterion == 'l2') else criteria.MaskedL1Loss()
 photometric_criterion = criteria.PhotometricLoss()
 smoothness_criterion = criteria.SmoothnessLoss()
+
+summary = SummaryWriter()
 
 if args.use_pose:
     # hard-coded KITTI camera intrinsics
@@ -151,6 +155,11 @@ def iterate(mode, args, loader, model, optimizer, logger, epoch):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+            if i % 10 == 0: # 매 10 iteration마다
+                summary.add_scalar('loss/depth_loss', depth_loss.item(), i)
+                summary.add_scalar('loss/photometric_loss', photometric_loss.item(), i)
+                summary.add_scalar('loss/smooth_loss', smooth_loss.item(), i)
+                summary.add_scalar('loss/loss', loss.item(), i)
 
         gpu_time = time.time() - start
 
